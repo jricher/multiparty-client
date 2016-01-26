@@ -215,19 +215,19 @@ public class ClientController {
 					
 					// this is the URL to send the user to
 					String claimsEndpoint = details.get("requesting_party_claims_endpoint").getAsString();
+					String newTicket = details.get("ticket").getAsString();
 					
 					// set a state value for our return
 					String state = UUID.randomUUID().toString();
 					session.setAttribute(STATE_SESSION_VAR, state);
 					
 					// save bits about the request we were trying to make
-					session.setAttribute(TICKET_SESSION_VAR, ticket);
 					session.setAttribute(RESOURCE_SESSION_VAR, resource);
 					session.setAttribute(AUTHSERVERURI_SESSION_VAR, authServerUri);
 					
 					UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(claimsEndpoint)
 						.queryParam("client_id", client.getClientId())
-						.queryParam("ticket", ticket)
+						.queryParam("ticket", newTicket)
 						.queryParam("claims_redirect_uri", client.getClaimsRedirectUris().iterator().next()) // get the first one and punt
 						.queryParam("state", state);
 					
@@ -271,11 +271,10 @@ public class ClientController {
 
 
 	@RequestMapping(value = "claims_submitted")
-	public String claimsSubmissionCallback(@RequestParam("authorization_state") String authorizationState, @RequestParam("state") String returnState, HttpSession session, Model m) {
+	public String claimsSubmissionCallback(@RequestParam("authorization_state") String authorizationState, @RequestParam("state") String returnState, @RequestParam("ticket") String ticket, HttpSession session, Model m) {
 		
 		// get our saved information out of the session
 		String savedState = (String) session.getAttribute(STATE_SESSION_VAR);
-		String savedTicket = (String) session.getAttribute(TICKET_SESSION_VAR);
 		String savedResource = (String) session.getAttribute(RESOURCE_SESSION_VAR);
 		String savedAuthServerUri = (String) session.getAttribute(AUTHSERVERURI_SESSION_VAR);
 		
@@ -303,7 +302,7 @@ public class ClientController {
 			params.add("client_id", client.getClientId());
 			params.add("client_secret", client.getClientSecret());
 			params.add("grant_type", "urn:ietf:params:oauth:grant_type:multiparty-delegation");
-			params.add("ticket", savedTicket);
+			params.add("ticket", ticket);
 			//params.add("scope", "read write");
 			
 			HttpEntity<MultiValueMap<String, String>> tokenRequest = new HttpEntity<>(params, tokenHeaders);
@@ -320,19 +319,19 @@ public class ClientController {
 					
 					// this is the URL to send the user to
 					String claimsEndpoint = details.get("requesting_party_claims_endpoint").getAsString();
+					String newTicket = details.get("ticket").getAsString();
 					
 					// set a state value for our return
 					String state = UUID.randomUUID().toString();
 					session.setAttribute(STATE_SESSION_VAR, state);
 					
 					// save bits about the request we were trying to make
-					session.setAttribute(TICKET_SESSION_VAR, savedTicket);
 					session.setAttribute(RESOURCE_SESSION_VAR, savedResource);
 					session.setAttribute(AUTHSERVERURI_SESSION_VAR, savedAuthServerUri);
 					
 					UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(claimsEndpoint)
 						.queryParam("client_id", client.getClientId())
-						.queryParam("ticket", savedTicket)
+						.queryParam("ticket", newTicket)
 						.queryParam("claims_redirect_uri", client.getClaimsRedirectUris().iterator().next()) // get the first one and punt
 						.queryParam("state", state);
 					

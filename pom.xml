@@ -29,7 +29,7 @@
 		<org.aspectj-version>1.6.9</org.aspectj-version>
 		<org.slf4j-version>1.5.10</org.slf4j-version>
 		<spring.security.version>3.2.8.RELEASE</spring.security.version>
-		<mitreid-connect-version>1.2.4-SNAPSHOT</mitreid-connect-version>
+		<mitreid-connect-version>1.2.5-SNAPSHOT</mitreid-connect-version>
 	</properties>
 	<dependencies>
 		<dependency>

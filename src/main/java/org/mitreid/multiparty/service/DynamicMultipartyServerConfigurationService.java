@@ -83,7 +83,7 @@ public class DynamicMultipartyServerConfigurationService implements MultipartySe
 			MultipartyServerConfiguration conf = new MultipartyServerConfiguration();
 
 			// construct the well-known URI
-			String url = issuer + "/.well-known/uma-configuration";
+			String url = issuer + "/.well-known/uma2-configuration";
 
 			// fetch the value
 			String jsonString = restTemplate.getForObject(url, String.class);
